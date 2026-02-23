@@ -1,9 +1,13 @@
-var fs = require('fs');
+const mongoose = require('mongoose');
+const Trip = require('../models/travlr');
 
-var trips = JSON.parse(fs.readFileSync('./data/trips.json', 'utf8'));
-
-const travel = (req, res) => {
-res.render('travel', { title: 'Travlr Getaways', trips: trips });
+const travel = async (req, res) => {
+try {
+    const trips = await Trip.find().exec();
+    res.render('travel', { title: 'Travlr Getaways', trips: trips });
+} catch (err) {
+    res.status(500).send(err.message);
+}
 };
 
 module.exports = {
