@@ -4,9 +4,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var hbs = require('hbs');
-require('./app_server/models/db');
+
+// MongoDB connection
+require('./app_api/models/db');
+
+// Routers
 var indexRouter = require('./app_server/routes/index');
 var usersRouter = require('./app_server/routes/users');
+var apiRouter = require('./app_api/routes/index'); // ⭐ API router (Module 5)
 
 var app = express();
 
@@ -14,8 +19,10 @@ var app = express();
 app.set('views', path.join(__dirname, 'app_server', 'views'));
 app.set('view engine', 'hbs');
 
-// register partials (needed for later)
-hbs.registerPartials(path.join(__dirname, 'app_server', 'views', 'partials'));
+// register partials
+hbs.registerPartials(
+  path.join(__dirname, 'app_server', 'views', 'partials')
+);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -23,8 +30,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api', apiRouter); // ⭐ connect API
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -34,7 +43,8 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error =
+    req.app.get('env') === 'development' ? err : {};
 
   res.status(err.status || 500);
   res.render('error');

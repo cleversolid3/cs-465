@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const Trip = require('../models/travlr');
+const Trip = require('../../app_api/models/travlr');
 
 const travel = async (req, res) => {
 try {
